@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Safety (vulnerable packages scan)
         run: |
-          safety scan --full-report --key ${{ secrets.SAFETY_API_KEY }}
+          safety check --full-report
 
       - name: Run Flake8 (code linting)
         run: |
