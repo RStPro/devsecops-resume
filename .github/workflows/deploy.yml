@@ -1,0 +1,54 @@
+name: CI/CD with Security Scans
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  security:
+    name: Run SAST Security Scans
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Bandit (Python security scan)
+        run: |
+          bandit -r . -x venv
+
+      - name: Run Safety (vulnerable packages scan)
+        run: |
+          safety check --full-report
+
+      - name: Run Flake8 (code linting)
+        run: |
+          flake8 .
+  
+  deploy:
+    name: Deploy to Fly.io
+    needs: security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Fly CLI
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
