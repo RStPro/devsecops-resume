@@ -8,23 +8,21 @@ class RemoveServerHeaderMiddleware:
 
     def __call__(self, environ, start_response):
         def custom_start_response(status, headers, exc_info=None):
-            headers = [
-                (key, value)
-                for key, value in headers
-                if key.lower() != 'server'
+            filtered = [
+                (k, v) for (k, v) in headers
+                if k.lower() != "server"
             ]
-            return start_response(status, headers, exc_info)
+            return start_response(status, filtered, exc_info)
         return self.app(environ, custom_start_response)
 
 
 app = Flask(__name__)
-app.wsgi_app = RemoveServerHeaderMiddleware(
-    app.wsgi_app
-)
+app.wsgi_app = RemoveServerHeaderMiddleware(app.wsgi_app)
 
 
 @app.after_request
 def apply_security_headers(response):
+    # ✅ Security Headers
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
         "style-src 'self' https://cdn.jsdelivr.net; "
@@ -47,7 +45,10 @@ def apply_security_headers(response):
     )
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
+
+    # ✅ Explicitly override Server header
     response.headers["Server"] = "Secure"
+
     return response
 
 
