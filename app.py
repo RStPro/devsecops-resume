@@ -45,4 +45,3 @@ def home():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Fly.io injects PORT
-    app.r
