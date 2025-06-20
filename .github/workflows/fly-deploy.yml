@@ -46,7 +46,8 @@ jobs:
         uses: zaproxy/action-baseline@v0.12.0
         with:
           target: ${{ secrets.ZAP_SCAN_URL }}
-          fail_action: false
+          fail_action: 
+          allow_issue_writing: false  # ⬅️ This prevents the post-scan GitHub issue creation
           cmd_options: "-z \"-config scanner.threadPerHost=3\""
 
   deploy:
