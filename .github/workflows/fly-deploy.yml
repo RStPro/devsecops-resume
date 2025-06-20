@@ -53,11 +53,12 @@ jobs:
       - name: Upload ZAP Scan Report
         uses: actions/upload-artifact@v4
         with:
-          name: zap-scan-report
+          name: zap-scan-report  # ✅ Must use hyphens only
           path: |
             report_html.html
             report_json.json
             report_md.md
+
 
   deploy:
     name: Deploy to Fly.io
