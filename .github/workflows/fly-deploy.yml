@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  ACTIONS_STEP_DEBUG: true
+  ACTIONS_RUNNER_DEBUG: true
+
 jobs:
   security:
     name: Run SAST Security Scans
@@ -49,38 +53,30 @@ jobs:
         uses: zaproxy/action-baseline@v0.12.0
         with:
           target: ${{ secrets.ZAP_SCAN_URL }}
-          fail_action: false
           allow_issue_writing: false
-          cmd_options: >-
-            -J report_json.json
-            -w report_md.md
-            -r report_html.html
-            -z "-config scanner.threadPerHost=3"
+          cmd_options: "-J report_json.json -w report_md.md -r report_html.html -z \"-config scanner.threadPerHost=3\""
 
-      - name: Move ZAP Reports to reports/ directory
+      - name: Organize ZAP reports
         run: |
           mkdir -p reports
-          mv report_html.html reports/
-          mv report_json.json reports/
-          mv report_md.md reports/
+          mv report_json.json report_md.md report_html.html reports/
 
       - name: Upload ZAP Scan Report
         uses: actions/upload-artifact@v4
-        continue-on-error: true
         with:
-          name: zapreport
+          name: zap-scan-results
           path: reports/
 
   deploy:
     name: Deploy to Fly.io
-    needs: security
+    needs: [security, zap_scan]
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Fly CLI
+      - name: Set up Fly.io CLI
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy to Fly.io
