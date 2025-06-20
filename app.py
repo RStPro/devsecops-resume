@@ -2,7 +2,19 @@ from flask import Flask, render_template
 import os
 
 
+class RemoveServerHeaderMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        def custom_start_response(status, headers, exc_info=None):
+            headers = [(key, value) for key, value in headers if key.lower() != 'server']
+            return start_response(status, headers, exc_info)
+        return self.app(environ, custom_start_response)
+
+
 app = Flask(__name__)
+app.wsgi_app = RemoveServerHeaderMiddleware(app.wsgi_app)
 
 
 @app.after_request
@@ -29,8 +41,7 @@ def apply_security_headers(response):
     )
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
-    response.headers["Server"] = "Secure"
-
+    response.headers["Server"] = "Secure"  # This is overridden by middleware
     return response
 
 
