@@ -47,7 +47,7 @@ jobs:
         with:
           target: ${{ secrets.ZAP_SCAN_URL }}
           fail_action: false
-          cmd_options: "-quick -configfile config.conf -config scanner.threadPerHost=3"
+          cmd_options: "-config scanner.threadPerHost=3"
 
   deploy:
     name: Deploy to Fly.io
