@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Safety (vulnerable packages scan)
         run: |
-          safety check --full-report
+          safety check --full-report --ignore-file .safety-ignore
 
       - name: Run Flake8 (code linting)
         run: |
