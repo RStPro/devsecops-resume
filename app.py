@@ -1,5 +1,10 @@
 from flask import Flask, render_template
+from dotenv import load_dotenv
 import os
+
+
+# Load environment variables from .env
+load_dotenv()
 
 
 class RemoveServerHeaderMiddleware:
@@ -18,6 +23,14 @@ class RemoveServerHeaderMiddleware:
 
 app = Flask(__name__)
 app.wsgi_app = RemoveServerHeaderMiddleware(app.wsgi_app)
+
+
+# Example usage
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY", "fallback-secret")
+
+
+# 🔍 Test print for verification (optional)
+# print("SECRET_KEY:", app.config['SECRET_KEY'])
 
 
 @app.after_request
