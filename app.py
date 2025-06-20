@@ -20,7 +20,7 @@ def apply_security_headers(response):
     # MIME sniffing prevention
     response.headers["X-Content-Type-Options"] = "nosniff"
 
-    # HSTS
+    # HSTS - enforce HTTPS
     response.headers["Strict-Transport-Security"] = (
         "max-age=63072000; includeSubDomains; preload"
     )
@@ -30,5 +30,19 @@ def apply_security_headers(response):
         "geolocation=(), camera=(), microphone=()"
     )
 
-    # Spectre protections
-    response.headers["Cross-Origin-Resource-Policy"] = "same-
+    # Spectre protection
+    response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+
+    return response
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))  # Fly.io injects PORT
+    app.r
