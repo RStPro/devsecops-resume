@@ -46,10 +46,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2.3.3
-        with:
-          args: detect --source=. --verbose --redact
+      - name: Run Gitleaks via Docker
+        run: |
+          docker run --rm -v $(pwd):/path zricethezav/gitleaks:latest detect --source=/path --verbose --redact
 
   # ────────────────────────────────
   # OWASP ZAP Scan (DAST)
