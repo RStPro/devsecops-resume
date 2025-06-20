@@ -7,7 +7,7 @@ on:
 
 jobs:
   # ────────────────────────────────
-  # Static Application Security Testing (SAST)
+  # Static Analysis (SAST)
   # ────────────────────────────────
   security:
     name: Run SAST Security Scans
@@ -37,7 +37,7 @@ jobs:
         run: flake8 .
 
   # ────────────────────────────────
-  # Dynamic Application Security Testing (DAST) using OWASP ZAP
+  # Dynamic Scan with OWASP ZAP (DAST)
   # ────────────────────────────────
   zapscan:
     name: Run OWASP ZAP DAST Scan
@@ -48,7 +48,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ✅ ZAP scan (no unsupported inputs like artifact_name)
+      # ✅ Correct use of ZAP action — NO unsupported parameters!
       - name: Run OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.12.0
         with:
@@ -63,18 +63,19 @@ jobs:
             -r report_html.html
             -z "-config scanner.threadPerHost=3"
 
-      # ✅ Prepare artifacts manually
+      # 📁 Organize ZAP scan results
       - name: Organize ZAP Reports
         run: |
           mkdir -p zap-output
           mv report_json.json report_md.md report_html.html zap-output/
 
+      # 🧪 Optional Debugging Step
       - name: Debug ZAP Output
         run: |
           echo "ZAP output directory contents:"
           ls -la zap-output || echo "Directory missing or empty"
 
-      # ✅ Upload ZAP results manually (safe)
+      # 📤 Upload scan reports as artifacts
       - name: Upload ZAP Scan Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -82,7 +83,7 @@ jobs:
           path: zap-output/
 
   # ────────────────────────────────
-  # Deployment to Fly.io
+  # Deployment (Fly.io)
   # ────────────────────────────────
   deploy:
     name: Deploy to Fly.io
