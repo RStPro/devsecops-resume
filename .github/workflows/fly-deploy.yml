@@ -58,10 +58,13 @@ jobs:
           mkdir -p zap-output
           mv report_json.json report_md.md report_html.html zap-output/
 
+      - name: Debug ZAP Output
+        run: ls -la zap-output
+
       - name: Upload ZAP Scan Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: zapscan-artifacts
+          name: zapscan-artifacts  # ✅ Valid artifact name
           path: zap-output/
 
   deploy:
