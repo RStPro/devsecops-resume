@@ -8,13 +8,19 @@ class RemoveServerHeaderMiddleware:
 
     def __call__(self, environ, start_response):
         def custom_start_response(status, headers, exc_info=None):
-            headers = [(key, value) for key, value in headers if key.lower() != 'server']
+            headers = [
+                (key, value)
+                for key, value in headers
+                if key.lower() != 'server'
+            ]
             return start_response(status, headers, exc_info)
         return self.app(environ, custom_start_response)
 
 
 app = Flask(__name__)
-app.wsgi_app = RemoveServerHeaderMiddleware(app.wsgi_app)
+app.wsgi_app = RemoveServerHeaderMiddleware(
+    app.wsgi_app
+)
 
 
 @app.after_request
@@ -41,7 +47,7 @@ def apply_security_headers(response):
     )
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
-    response.headers["Server"] = "Secure"  # This is overridden by middleware
+    response.headers["Server"] = "Secure"
     return response
 
 
@@ -53,3 +59,4 @@ def home():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  # Fly.io injects PORT
     app.run(debug=False, host='0.0.0.0', port=port)  # nosec
+
