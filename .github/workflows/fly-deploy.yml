@@ -33,7 +33,7 @@ jobs:
       - name: Run Flake8 (code linting)
         run: flake8 .
 
-  zapscan:  # ✅ renamed from 'zap_scan'
+  zapscan:  # ✅ No underscore!
     name: Run OWASP ZAP DAST Scan
     runs-on: ubuntu-latest
     needs: security
@@ -59,12 +59,14 @@ jobs:
           mv report_json.json report_md.md report_html.html zap-output/
 
       - name: Debug ZAP Output
-        run: ls -la zap-output
+        run: |
+          echo "ZAP output directory contents:"
+          ls -la zap-output || echo "Directory missing or empty"
 
       - name: Upload ZAP Scan Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: zapscan-artifacts
+          name: zapscan-artifacts  # ✅ Safe artifact name
           path: zap-output/
 
   deploy:
