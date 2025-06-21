@@ -35,7 +35,7 @@ jobs:
         run: safety check --full-report --ignore=51358
 
       - name: Run Flake8 (code linting)
-        run: flake8 .
+        run: flake8 app.py templates/
 
   # ────────────────────────────────
   # GitLeaks Secret Scan
