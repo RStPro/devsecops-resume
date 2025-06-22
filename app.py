@@ -94,5 +94,5 @@ def home():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5050))  # Fly.io injects PORT
+    port = int(os.environ.get('PORT', 5000))  # Fly.io injects PORT
     app.run(debug=False, host='0.0.0.0', port=port)  # nosec
