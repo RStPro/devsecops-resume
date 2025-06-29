@@ -85,7 +85,9 @@ def apply_security_headers(response):
     response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
     response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
     response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
-    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+    response.headers["Cache-Control"] = (
+        "no-store, no-cache, must-revalidate, private"
+    )
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     response.headers["Server"] = "Secure"
